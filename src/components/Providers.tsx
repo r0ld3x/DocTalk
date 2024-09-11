@@ -11,11 +11,7 @@ const Providers = ({ children }: { children: ReactNode }) => {
     trpc.createClient({
       links: [
         httpBatchLink({
-          url: `${
-            process.env.NODE_ENV === "development"
-              ? "http://localhost:3000"
-              : "http://localhost:3000"
-          }/api/trpc`,
+          url: `"https://doctalk.pro"/api/trpc`,
         }),
       ],
     })
