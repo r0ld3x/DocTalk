@@ -10,10 +10,6 @@ type StreamResponse = {
   isLoading: boolean;
 };
 
-function removePrefix(input: string) {
-  return input.replace(/^0:/, "").trim();
-}
-
 export const ChatContext = createContext<StreamResponse>({
   addMessage: () => {},
   message: "",
@@ -30,7 +26,7 @@ export const ChatContextProvider = ({ fileId, children }: Props) => {
   const [message, setMessage] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const utils = trpc.useUtils();
+  const utils = trpc.useContext();
 
   const { toast } = useToast();
 
@@ -115,15 +111,13 @@ export const ChatContextProvider = ({ fileId, children }: Props) => {
       const decoder = new TextDecoder();
       let done = false;
 
+      // accumulated response
       let accResponse = "";
 
       while (!done) {
         const { value, done: doneReading } = await reader.read();
-        const trimmedArray =
-          value && value?.length !== 0 ? value.slice(3, -2) : value;
-
         done = doneReading;
-        const chunkValue = decoder.decode(trimmedArray);
+        const chunkValue = decoder.decode(value);
 
         accResponse += chunkValue;
 
@@ -144,7 +138,7 @@ export const ChatContextProvider = ({ fileId, children }: Props) => {
                   {
                     createdAt: new Date().toISOString(),
                     id: "ai-response",
-                    text: accResponse.trim(),
+                    text: accResponse,
                     isUserMessage: false,
                   },
                   ...page.messages,
@@ -154,10 +148,7 @@ export const ChatContextProvider = ({ fileId, children }: Props) => {
                   if (message.id === "ai-response") {
                     return {
                       ...message,
-                      text: removePrefix(accResponse.trim())
-                        .toString()
-                        .replace(/\\n/gi, "\n")
-                        .replace(/\n/gi, "<br/>"),
+                      text: accResponse,
                     };
                   }
                   return message;
