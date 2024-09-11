@@ -125,10 +125,7 @@ export const ChatContextProvider = ({ fileId, children }: Props) => {
         done = doneReading;
         const chunkValue = decoder.decode(trimmedArray);
 
-        accResponse += chunkValue
-          .toString()
-          .replace(/\\n/gi, "\n")
-          .replace(/\n/gi, "<br/>");
+        accResponse += chunkValue;
 
         // append chunk to the actual message
         utils.getFileMessages.setInfiniteData({ fileId, limit: 10 }, (old) => {
@@ -157,7 +154,10 @@ export const ChatContextProvider = ({ fileId, children }: Props) => {
                   if (message.id === "ai-response") {
                     return {
                       ...message,
-                      text: removePrefix(accResponse.trim()),
+                      text: removePrefix(accResponse.trim())
+                        .toString()
+                        .replace(/\\n/gi, "\n")
+                        .replace(/\n/gi, "<br/>"),
                     };
                   }
                   return message;
