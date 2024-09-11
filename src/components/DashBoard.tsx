@@ -1,0 +1,112 @@
+"use client";
+
+import { trpc } from "@/app/_trpc/client";
+import { Ghost, Loader2Icon, Plus, TrashIcon } from "lucide-react";
+import Link from "next/link";
+
+import UploadButton from "./UploadButton";
+
+import { format } from "date-fns";
+import { useState } from "react";
+import MaxWidthWrapper from "./MaxWidthWrapper";
+import { Button } from "./ui/button";
+import { Skeleton } from "./ui/skeleton";
+
+const DashBoard = ({ isSubscribed }: { isSubscribed: boolean }) => {
+  const [currentDeletingFile, setCurrentDeletingFile] = useState<string | null>(
+    null
+  );
+
+  const utils = trpc.useUtils();
+
+  const { data: files, isLoading } = trpc.getUserFiles.useQuery();
+
+  const { mutate: deleteFile } = trpc.deleteFile.useMutation({
+    onSuccess: () => {
+      utils.getUserFiles.invalidate();
+    },
+    onMutate({ id }) {
+      setCurrentDeletingFile(id);
+    },
+    onSettled: () => {
+      setCurrentDeletingFile(null);
+    },
+  });
+
+  return (
+    <MaxWidthWrapper>
+      <main className="mx-auto max-w-7xl md:p-10">
+        <div className="mt-8 flex  items-start justify-between gap-4 border-b border-gray-200 dark:border-gray-700  pb-5 sm:flex-row sm:items-center sm:gap-0">
+          <h1 className="mb-3 font-bold text-3xl md:text-5xl ">My Files</h1>
+          <UploadButton isSubscribed={isSubscribed} />
+        </div>
+        {files && files.length > 0 ? (
+          <ul className="mt-8  grid grid-col-1 gap-6 divide-y divide-zinc-200  md:grid-cols-2 lg:grid-cols-3">
+            {files
+              // .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+              .map((file) => (
+                <li
+                  key={file.id}
+                  className="col-span-1 divide-y divide-gray-200 rounded-lg bg-white dark:bg-slate-800 dark:text-white shadow transition hover:shadow-lg dark:divide-gray-700 w-full"
+                >
+                  <Link
+                    href={`/dashboard/${file.id}`}
+                    className="flex flex-col gap-2"
+                  >
+                    <div className="pt-6 px-6  flex w-full items-center justify-between space-x-2 md:space-x-6">
+                      <div className="h-10 w-10 flex-shrink-0 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600" />
+                      <div className="flex-1 truncate ">
+                        <div className="flex items-center space-x-3">
+                          <h3
+                            className="truncate sm:text-lg font-medium text-zinc-900 dark:text-white"
+                            style={{
+                              textOverflow: "ellipsis",
+                              wordBreak: "break-all",
+                              whiteSpace: "normal",
+                            }}
+                          >
+                            {file.name}
+                          </h3>
+                        </div>
+                      </div>
+                    </div>
+                  </Link>
+                  <div className="px-6 mt-4 flex items-center justify-between py-2 gap-6 text-xs text-zinc-500 dark:text-white">
+                    <div className="flex items-center gap-2 ">
+                      <Plus className="h-4 w-4" />
+                      {format(new Date(file.createdAt), "MMM dd, yyyy")}
+                    </div>
+
+                    <Button
+                      onClick={() => deleteFile({ id: file.id })}
+                      variant={"destructive"}
+                      size={"default"}
+                    >
+                      {currentDeletingFile === file.id ? (
+                        <Loader2Icon className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <TrashIcon className="h-4 w-4" />
+                      )}
+                    </Button>
+                  </div>
+                </li>
+              ))}
+          </ul>
+        ) : isLoading ? (
+          <div className="">
+            <Skeleton className="h-16 w-full dark:bg-slate-700" />
+            {/* <Skeleton height={100} className="my-2 " count={3} /> */}
+          </div>
+        ) : (
+          <h1 className="mt-16 flex flex-col items-center gap-2">
+            <Ghost className="h8 w-8 text-zinc-800 dark:text-white" />
+            <h3 className="font-semibold text-xl">Pretty empty around here</h3>
+            <p>let&apos;s upload a PDF file</p>
+          </h1>
+        )}
+      </main>
+    </MaxWidthWrapper>
+  );
+};
+
+export default DashBoard;
