@@ -11,7 +11,7 @@ const Providers = ({ children }: { children: ReactNode }) => {
     trpc.createClient({
       links: [
         httpBatchLink({
-          url: `"https://doctalk.pro"/api/trpc`,
+          url: `https://doctalk.pro/api/trpc`,
         }),
       ],
     })
