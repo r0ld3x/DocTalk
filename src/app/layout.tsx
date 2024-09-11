@@ -20,6 +20,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="light">
+      <head>
+        <meta
+          http-equiv="Content-Security-Policy"
+          content="upgrade-insecure-requests"
+        ></meta>
+      </head>
       <Providers>
         <body
           className={cn(

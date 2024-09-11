@@ -14,7 +14,7 @@ const Providers = ({ children }: { children: ReactNode }) => {
           url: `${
             process.env.NODE_ENV === "development"
               ? "http://localhost:3000"
-              : "http://doctalk.pro"
+              : "http://localhost:3000"
           }/api/trpc`,
         }),
       ],
