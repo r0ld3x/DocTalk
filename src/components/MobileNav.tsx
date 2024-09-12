@@ -2,12 +2,18 @@
 
 import { LogoutLink } from "@kinde-oss/kinde-auth-nextjs/components";
 import { KindeUser } from "@kinde-oss/kinde-auth-nextjs/types";
-import { ArrowRight, Menu } from "lucide-react";
+import { ArrowRight, Gem, Menu } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
-const MobileNav = ({ user }: { user: KindeUser<Record<string, any>> }) => {
+const MobileNav = ({
+  user,
+  isSubscribed,
+}: {
+  user: KindeUser<Record<string, any>>;
+  isSubscribed: boolean;
+}) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const toggleOpen = () => setIsOpen((prev) => !prev);
@@ -49,9 +55,9 @@ const MobileNav = ({ user }: { user: KindeUser<Record<string, any>> }) => {
                 <li className="my-3 h-px w-full bg-gray-300" />
                 <li>
                   <Link
-                    onClick={() => closeOnCurrent("/api/auth/login?")}
+                    onClick={() => closeOnCurrent("/api/auth/login")}
                     className="flex items-center w-full font-semibold"
-                    href="/api/auth/login?"
+                    href="/api/auth/login"
                   >
                     Sign in
                   </Link>
@@ -78,6 +84,18 @@ const MobileNav = ({ user }: { user: KindeUser<Record<string, any>> }) => {
                     Dashboard
                   </Link>
                 </li>
+                <li className="my-3 h-px w-full bg-gray-300" />
+
+                <li>
+                  {isSubscribed ? (
+                    <Link href={"/dashboard/billing"}>Billing</Link>
+                  ) : (
+                    <Link href={"/pricing"} className="flex items-center ">
+                      Upgrade <Gem className="text-blue-600 h-4 w-4 ml-1.5" />
+                    </Link>
+                  )}
+                </li>
+
                 <li className="my-3 h-px w-full bg-gray-300" />
                 <li className="cursor-pointer text-red-500">
                   <LogoutLink>Logout</LogoutLink>

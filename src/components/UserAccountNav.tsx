@@ -9,7 +9,6 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 
-import { getUserSubscriptionPlan } from "@/lib/stripe";
 import { LogoutLink } from "@kinde-oss/kinde-auth-nextjs/components";
 import Image from "next/image";
 import Link from "next/link";
@@ -18,12 +17,13 @@ const UserAccountNav = async ({
   email,
   imageUrl,
   name,
+  isSubscribed,
 }: {
   email: string | null;
   imageUrl: string | null;
   name: string | null;
+  isSubscribed: boolean;
 }) => {
-  const subscription = await getUserSubscriptionPlan();
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild className="overflow-hidden">
@@ -68,7 +68,7 @@ const UserAccountNav = async ({
           <Link href={"/dashboard"}>Dashboard</Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild className="cursor-pointer">
-          {subscription?.isSubscribed ? (
+          {isSubscribed ? (
             <Link href={"/dashboard/billing"}>Billing</Link>
           ) : (
             <Link href={"/pricing"}>
