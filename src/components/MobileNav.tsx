@@ -1,14 +1,16 @@
 "use client";
 
+import { LogoutLink } from "@kinde-oss/kinde-auth-nextjs/components";
+import { KindeUser } from "@kinde-oss/kinde-auth-nextjs/types";
 import { ArrowRight, Menu } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
-const MobileNav = ({ isAuth }: { isAuth: boolean }) => {
-  const [isOpen, setOpen] = useState<boolean>(false);
+const MobileNav = ({ user }: { user: KindeUser<Record<string, any>> }) => {
+  const [isOpen, setIsOpen] = useState<boolean>(false);
 
-  const toggleOpen = () => setOpen((prev) => !prev);
+  const toggleOpen = () => setIsOpen((prev) => !prev);
 
   const pathname = usePathname();
 
@@ -32,13 +34,13 @@ const MobileNav = ({ isAuth }: { isAuth: boolean }) => {
       {isOpen ? (
         <div className="fixed animate-in slide-in-from-top-5 fade-in-20 inset-0 z-0 w-full">
           <ul className="absolute bg-white dark:bg-slate-800 border-b border-zinc-200 shadow-xl grid w-full gap-3 px-10 pt-20 pb-8">
-            {!isAuth ? (
+            {!user ? (
               <>
                 <li>
                   <Link
-                    onClick={() => closeOnCurrent("/sign-up")}
+                    onClick={() => closeOnCurrent("/api/auth/register")}
                     className="flex items-center w-full font-semibold text-green-600"
-                    href="/sign-up"
+                    href="/api/auth/register"
                   >
                     Get started
                     <ArrowRight className="ml-2 h-5 w-5" />
@@ -47,9 +49,9 @@ const MobileNav = ({ isAuth }: { isAuth: boolean }) => {
                 <li className="my-3 h-px w-full bg-gray-300" />
                 <li>
                   <Link
-                    onClick={() => closeOnCurrent("/sign-in")}
+                    onClick={() => closeOnCurrent("/api/auth/login?")}
                     className="flex items-center w-full font-semibold"
-                    href="/sign-in"
+                    href="/api/auth/login?"
                   >
                     Sign in
                   </Link>
@@ -77,13 +79,8 @@ const MobileNav = ({ isAuth }: { isAuth: boolean }) => {
                   </Link>
                 </li>
                 <li className="my-3 h-px w-full bg-gray-300" />
-                <li>
-                  <Link
-                    className="flex items-center w-full font-semibold"
-                    href="/sign-out"
-                  >
-                    Sign out
-                  </Link>
+                <li className="cursor-pointer text-red-500">
+                  <LogoutLink>Logout</LogoutLink>
                 </li>
               </>
             )}

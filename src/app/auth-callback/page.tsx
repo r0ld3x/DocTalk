@@ -18,7 +18,7 @@ const Page = () => {
     },
     onError: (err) => {
       if (err.data?.code === "UNAUTHORIZED") {
-        router.push("/sign-in");
+        router.push("/api/auth/login");
       } else {
         router.push("/dashboard");
       }

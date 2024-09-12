@@ -78,7 +78,7 @@ const ChatWrapper = ({ fileId }: { fileId: string }) => {
   return (
     <ChatContextProvider fileId={fileId}>
       <div className="relative min-h-full bg-zinc-50 dark:bg-slate-900 dark:text-white  divide-y divide-zinc-200 flex-col justify-between gap-2 h-[calc(100vh-3.5rem)] ">
-        <div className="flex-1 justify-between flex flex-col ">
+        <div className="flex-1 justify-between flex flex-col h-full">
           <Messages fileId={fileId} />
         </div>
         <ChatInput />

@@ -14,7 +14,6 @@ import UserAccountNav from "./UserAccountNav";
 const NavBar = async () => {
   const { getUser } = getKindeServerSession();
   const user = await getUser();
-
   return (
     <div className="sticky h-14 inset-x-0 top-0 z-30 w-full border-b border-gray-200 dark:border-slate-800  bg-white/75 dark:bg-slate-900 dark:text-white backdrop-blur-lg transition-all">
       <MaxWidthWrapper>
@@ -27,7 +26,7 @@ const NavBar = async () => {
               <ModeToggle />
             </div>
 
-            <MobileNav isAuth={!!user} />
+            <MobileNav user={user} />
           </div>
           <div className="hidden items-center space-x-4  sm:flex">
             <ModeToggle />
